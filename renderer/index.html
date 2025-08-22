@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Stream Client</title>
+    <style>
+        body {
+            margin: 0;
+            background: #00FF00;
+            font-family: sans-serif;
+            color: white;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        #nowPlaying {
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 6px rgba(0,0,0,0.5);
+        }
+
+        #queues {
+            display: flex;
+            gap: 32px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .queue {
+            flex: 1;
+            min-width: 200px;
+            max-width: 400px;
+        }
+
+        .queue h2 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ddd;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        li {
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.4);
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        li.playing {
+            background: rgba(255,255,255,0.2);
+            font-weight: bold;
+            color: #FF0000;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="nowPlaying">Now Playing: <span id="current">Nothing</span></div>
+
+    <div id="queues">
+
+    </div>
+</div>
+
+<script>
+    async function update() {
+        const res = await fetch("http://localhost:3000/status");
+        const data = await res.json();
+
+        document.getElementById("current").innerText =
+            data.current ? data.current.title : "Nothing";
+
+        const queuesEl = document.getElementById("queues");
+        queuesEl.innerHTML = "";
+
+        const hasUser = data.userQueue && data.userQueue.length > 0;
+        const hasDefault = data.defaultQueue && data.defaultQueue.length > 0;
+
+        if (hasUser && hasDefault) {
+            queuesEl.appendChild(renderQueue("User Queue", data.userQueue, data.current?.url));
+            queuesEl.appendChild(renderQueue("Default Queue", data.defaultQueue, data.current?.url));
+        } else if (hasUser) {
+            queuesEl.appendChild(renderQueue("User Queue", data.userQueue, data.current?.url));
+        } else if (hasDefault) {
+            queuesEl.appendChild(renderQueue("Default Queue", data.defaultQueue, data.current?.url));
+        }
+    }
+
+    function renderQueue(title, list, currentUrl) {
+        const div = document.createElement("div");
+        div.className = "queue";
+
+        const h2 = document.createElement("h2");
+        h2.innerText = title;
+        div.appendChild(h2);
+
+        const ul = document.createElement("ul");
+        list.forEach(item => {
+            const li = document.createElement("li");
+            li.innerText = item.title;
+            if (currentUrl && item.url === currentUrl) {
+                li.classList.add("playing");
+            }
+            ul.appendChild(li);
+        });
+        div.appendChild(ul);
+
+        return div;
+    }
+
+    setInterval(update, 2000);
+</script>
+</body>
+</html>
