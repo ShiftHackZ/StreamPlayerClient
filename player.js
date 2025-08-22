@@ -7,7 +7,6 @@ class Player {
         this.userQueue = [];
         this.current = null;
 
-        // слушаем всегда завершение трека
         this.mpv.on('stopped', () => this.handleStopped());
     }
 
@@ -20,7 +19,6 @@ class Player {
     }
 
     async playNext() {
-        // если что-то уже играет, не трогаем (стартуем только когда нет current)
         if (this.current) return;
 
         let next = null;
@@ -39,14 +37,12 @@ class Player {
             await this.mpv.play();
         } catch (e) {
             console.warn('mpv load/play failed:', e.message);
-            // если mpv упал, сразу пробуем следующий
             this.handleStopped();
         }
     }
 
     async handleStopped() {
         if (!this.current) {
-            // ничего не играет, просто пытаемся стартовать
             await this.playNext();
             return;
         }
@@ -54,7 +50,6 @@ class Player {
         const currentUrl = this.current;
         let isUser = this.userQueue[0] === currentUrl;
 
-        // обработка завершения
         if (isUser) {
             this.userQueue.shift(); // удаляем user после окончания
         } else if (this.defaultQueue[0] === currentUrl) {
