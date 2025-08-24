@@ -78,5 +78,9 @@ function loadM3U(filePath) {
         .split(/\r?\n/)
         .map(l => l.trim())
         .filter(l => l && !l.startsWith('#'));
+    for (let i = lines.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [lines[i], lines[j]] = [lines[j], lines[i]];
+    }
     return lines;
 }

@@ -48,6 +48,14 @@ StreamClient is an open-source music streaming backend designed to run on an OBS
    ```sh
    npm start
    ```
+   
+### Building
+
+To build the application for distribution (Windows x64 for example), run this command:
+
+```sh
+npx electron-packager . StreamClient --platform=win32 --arch=x64 --out=dist --overwrite
+```
 
 ### Usage
 
