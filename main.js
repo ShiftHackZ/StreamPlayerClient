@@ -20,6 +20,7 @@ function createWindow() {
 
 app.on('ready', createWindow);
 
+// const defaultPlaylist = loadM3U(path.join(__dirname, 'default_youtube_sample.m3u'));
 const defaultPlaylist = loadM3U(path.join(__dirname, 'default.m3u'));
 defaultPlaylist.forEach(url => player.addDefault(url));
 

@@ -2,7 +2,13 @@ const MPV = require('node-mpv');
 
 class Player {
     constructor() {
-        this.mpv = new MPV({ audio_only: false, auto_restart: true });
+        this.mpv = new MPV({
+            audio_only: false,
+            auto_restart: true,
+        }, [
+            //"--ytdl-raw-options=cookies=c:/cookies.txt,mark-watched=",
+            "--ytdl-raw-options=cookies=/home/shifthackz/cookies.txt,mark-watched=",
+        ]);
         this.defaultQueue = [];
         this.userQueue = [];
         this.current = null;
